@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom"><title>phonchi's blog</title><link href="http://phonchi.github.io/" rel="alternate"></link><link href="http://phonchi.github.io/feeds/tag_ssl.atom.xml" rel="self"></link><id>http://phonchi.github.io/</id><updated>2016-05-03T16:00:00+08:00</updated><entry><title>SSL Basics And Setting SSL</title><link href="http://phonchi.github.io/posts/2016/05/Setup-SSL/" rel="alternate"></link><published>2016-05-03T16:00:00+08:00</published><author><name>phonchi</name></author><id>tag:phonchi.github.io,2016-05-03:posts/2016/05/Setup-SSL/</id><summary type="html">&lt;hr /&gt;
 &lt;p&gt;&lt;span class="caps"&gt;SSL&lt;/span&gt;(Secure Sockets Layer) 是一個重要的網路安全協定, 越來越多網站會使用&lt;span class="caps"&gt;SSL&lt;/span&gt;來進行與使用者互動或機密資料傳輸，用瀏覽器(Chrome)連入主留網站大多可看到網址列左方有一個鎖，這個鎖即表明此網站會用&lt;span class="caps"&gt;HTTP&lt;/span&gt; over &lt;span class="caps"&gt;SSL&lt;/span&gt;來跟瀏覽器對話。
 &lt;div class="figure"&gt;
-  &lt;img src="pics/https.png"/&gt;
+  &lt;img src="http://phonchi.github.io/posts/2016/05/Setup-SSL/pics/https.png"/&gt;
   &lt;p class="caption center"&gt;&lt;span class="caps"&gt;HTTPS&lt;/span&gt;&amp;nbsp;Example&lt;/p&gt;
 &lt;/div&gt;
 如果有經營網站的朋友們要如何讓網站啟用此項功能呢，我們會先從Basics說起，然後說明如何透過免費&lt;span class="caps"&gt;CA&lt;/span&gt;(Certificate Authority)來取得憑證，之後以&lt;span class="caps"&gt;XAMPP&lt;/span&gt;這個架站框架來說明如何將透過憑證開啟&lt;span class="caps"&gt;HTTPS&lt;/span&gt;的功能~&lt;/p&gt;
