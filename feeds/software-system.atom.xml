@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>phonchi's blog</title><link href="http://phonchi.github.io/" rel="alternate"></link><link href="http://phonchi.github.io/feeds/software-system.atom.xml" rel="self"></link><id>http://phonchi.github.io/</id><updated>2016-05-03T16:00:00+08:00</updated><entry><title>SSL Basics And Setting SSL</title><link href="http://phonchi.github.io/posts/2016/05/Setup-SSL/" rel="alternate"></link><published>2016-05-03T16:00:00+08:00</published><author><name>phonchi</name></author><id>tag:phonchi.github.io,2016-05-03:posts/2016/05/Setup-SSL/</id><summary type="html">&lt;hr /&gt;
-&lt;p&gt;&lt;span class="caps"&gt;SSL&lt;/span&gt;(Secure Sockets Layer) 是一個重要的網路安全協定, 越來越多網站會使用&lt;span class="caps"&gt;SSL&lt;/span&gt;來進行與使用者互動或機密資料傳輸，用瀏覽器(Chrome)連入主留網站大多可看到網址列左方有一個鎖，這個鎖即表明此網站會用&lt;span class="caps"&gt;HTTP&lt;/span&gt; over &lt;span class="caps"&gt;SSL&lt;/span&gt;來跟瀏覽器對話。
+&lt;p&gt;&lt;span class="caps"&gt;SSL&lt;/span&gt;(Secure Sockets Layer) 是一個重要的網路安全協定, 越來越多網站會使用&lt;span class="caps"&gt;SSL&lt;/span&gt;來進行與使用者互動或機密資料傳輸，用瀏覽器(Chrome)連入主流網站大多可看到網址列左方有一個鎖，這個鎖即表明此網站會用 &lt;span class="caps"&gt;HTTPS&lt;/span&gt;(&lt;span class="caps"&gt;HTTP&lt;/span&gt; over &lt;span class="caps"&gt;SSL&lt;/span&gt;)來跟瀏覽器對話。
 &lt;div class="figure"&gt;
   &lt;img src="http://phonchi.github.io/posts/2016/05/Setup-SSL/pics/https.png"/&gt;
   &lt;p class="caption center"&gt;&lt;span class="caps"&gt;HTTPS&lt;/span&gt;&amp;nbsp;Example&lt;/p&gt;
 &lt;/div&gt;
-如果有經營網站的朋友們要如何讓網站啟用此項功能呢，我們會先從Basics說起，然後說明如何透過免費&lt;span class="caps"&gt;CA&lt;/span&gt;(Certificate Authority)來取得憑證，之後以&lt;span class="caps"&gt;XAMPP&lt;/span&gt;這個架站框架來說明如何將透過憑證開啟&lt;span class="caps"&gt;HTTPS&lt;/span&gt;的功能~&lt;/p&gt;
+如果有經營網站的朋友們要如何讓網站啟用此項功能呢，我們會先從Basics說起，然後說明如何透過免費 &lt;span class="caps"&gt;CA&lt;/span&gt;(Certificate Authority)來取得憑證，之後以&lt;span class="caps"&gt;XAMPP&lt;/span&gt;這個架站框架來說明如何將透過憑證開啟&lt;span class="caps"&gt;HTTPS&lt;/span&gt;的功能~&lt;/p&gt;
 &lt;div class="toc"&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="#ssl-basics"&gt;&lt;span class="caps"&gt;SSL&lt;/span&gt;&amp;nbsp;Basics&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="#createing-certificate"&gt;Createing Certificate&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href="#private-key-csrcertificate-singning-request"&gt;產生private key 和 &lt;span class="caps"&gt;CSR&lt;/span&gt;(Certificate Singning&amp;nbsp;Request)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#private-key-csr-certificate-singning-request"&gt;產生private key 和 &lt;span class="caps"&gt;CSR&lt;/span&gt; (Certificate Singning&amp;nbsp;Request)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="#cacsrca"&gt;選定&lt;span class="caps"&gt;CA&lt;/span&gt;然後將&lt;span class="caps"&gt;CSR&lt;/span&gt;給&lt;span class="caps"&gt;CA&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="#certificateprivate-key"&gt;將certificate和private key&amp;nbsp;放入你的網站&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -21,25 +21,26 @@
 &lt;h3 id="ssl-basics"&gt;&lt;span class="caps"&gt;SSL&lt;/span&gt;&amp;nbsp;Basics&lt;/h3&gt;
 &lt;p&gt;&lt;span class="caps"&gt;SSL&lt;/span&gt;由 上古時代的大公司Netscape開發，其1.0版並未公開釋出，第一個公開版本為1995年問市的2.0版，不過由於2.0版有些許安全性缺陷，因此隔年Netscape就推出&lt;span class="caps"&gt;SSL&lt;/span&gt;&amp;nbsp;3.0。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;span class="caps"&gt;IETF&lt;/span&gt;（Internet Engineering Task Force，網際網路工程任務組）在1999年制定&lt;span class="caps"&gt;RFC2246&lt;/span&gt;，並將其稱為&lt;span class="caps"&gt;TLS&lt;/span&gt;（Transport Layer Security），將其視為&lt;span class="caps"&gt;SSL&lt;/span&gt;的升級版，並於2006與2008年推出&lt;span class="caps"&gt;TLS&lt;/span&gt;&amp;nbsp;1.1與1.2版。&lt;/p&gt;
+&lt;p&gt;&lt;span class="caps"&gt;IETF&lt;/span&gt;（Internet Engineering Task Force）在1999年制定&lt;span class="caps"&gt;RFC2246&lt;/span&gt;，並將其稱為&lt;span class="caps"&gt;TLS&lt;/span&gt;（Transport Layer Security），將其視為&lt;span class="caps"&gt;SSL&lt;/span&gt;的升級版，並於2006與2008年推出&lt;span class="caps"&gt;TLS&lt;/span&gt;&amp;nbsp;1.1與1.2版。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;因此&lt;span class="caps"&gt;SSL&lt;/span&gt;和&lt;span class="caps"&gt;TLS&lt;/span&gt;可以當作交互使用的協定，絕大部分的瀏覽器都支援&lt;span class="caps"&gt;SSL&lt;/span&gt;、&lt;span class="caps"&gt;TLS&lt;/span&gt;，且已預先安裝了各大&lt;span class="caps"&gt;CA&lt;/span&gt;（Certificate Authority，電子證書認證機構）的相關憑證檔案，會在使用者進入支援&lt;span class="caps"&gt;SSL&lt;/span&gt;、&lt;span class="caps"&gt;TLS&lt;/span&gt;的網頁時，自動建立加密連線。再交握的過程中憑證是很重要的，因此我們先轉向&lt;span class="caps"&gt;CA&lt;/span&gt;的說明&lt;/p&gt;
-&lt;p&gt;基本上一般&lt;span class="caps"&gt;CA&lt;/span&gt;對申請網站的鑑別方式可以分為3種，最簡易的驗證方式為網域驗證（Domain Validation），&lt;span class="caps"&gt;CA&lt;/span&gt;只會簡單地鑑別網域所有權，個人也可申請，等級最低也最便宜甚至免費。第二種稱為機構驗證（Organization Validation），申請網站需要提出政府所發的正式文件，向&lt;span class="caps"&gt;CA&lt;/span&gt;證明自己是合法登記設立的公司行號、機關團體。最為嚴謹的是延伸驗證（Extended&amp;nbsp;Validation），根據經電子商務交易安全整合平台提供的資料，申請延伸驗證需要有合法文件證明商業實體的設立與運作，以及合法文件證明合法擁有登記的網域名稱，並能夠完整掌控該網域名稱之運用等條件，可以確保該網站的擁有者就是一般人所認定的同一公司或組織，安全性更加可靠。&lt;/p&gt;
+&lt;p&gt;因此&lt;span class="caps"&gt;SSL&lt;/span&gt;和&lt;span class="caps"&gt;TLS&lt;/span&gt;可以當作同一脈下來的協定，目前主流瀏覽器都支援&lt;span class="caps"&gt;SSL&lt;/span&gt;、&lt;span class="caps"&gt;TLS&lt;/span&gt;，且已預先安裝了各大&lt;span class="caps"&gt;CA&lt;/span&gt;（Certificate Authority）的相關憑證檔案，會在使用者進入支援&lt;span class="caps"&gt;SSL&lt;/span&gt;、&lt;span class="caps"&gt;TLS&lt;/span&gt;的網頁時，自動建立加密連線。在協定交握的過程中&lt;strong&gt;憑證&lt;/strong&gt;是很重要的，因此我們先轉向&lt;span class="caps"&gt;CA&lt;/span&gt;的說明&lt;/p&gt;
+&lt;p&gt;基本上一般&lt;span class="caps"&gt;CA&lt;/span&gt;對申請網站的鑑別方式可以分為3種，最簡易的驗證方式為網域驗證（Domain Validation），&lt;span class="caps"&gt;CA&lt;/span&gt;只會簡單地鑑別網域所有權，個人也可申請，等級最低也最便宜甚至免費。第二種稱為機構驗證（Organization Validation），申請網站需要提出政府所發的正式文件，向&lt;span class="caps"&gt;CA&lt;/span&gt;證明自己是合法登記設立的公司行號、機關團體。最為嚴謹的是延伸驗證（Extended&amp;nbsp;Validation），根據經電子商務交易安全整合平台提供的資料，申請延伸驗證需要有合法文件證明商業實體的設立與運作，以及合法文件證明合法擁有登記的網域名稱，並能夠完整掌控該網域名稱之運用等條件，可以確保該網站的擁有者就是一般人所認定的同一公司或組織。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;&lt;span class="caps"&gt;CA&lt;/span&gt;的運作方式為階層式的組成，基本上可以把&lt;span class="caps"&gt;CA&lt;/span&gt;想成第三方憑證中心在認證後用他的公鑰簽署你的公鑰的文件(不同於&lt;span class="caps"&gt;PGP&lt;/span&gt;的信任網)，詳細規格可看X.509文件，因此如果你不相信底層&lt;span class="caps"&gt;CA&lt;/span&gt;你可以去驗證底層&lt;span class="caps"&gt;CA&lt;/span&gt;的公鑰有沒有經過更高層&lt;span class="caps"&gt;CA&lt;/span&gt;驗證簽署，以此類推，最後回溯到你可以信任的&lt;span class="caps"&gt;CA&lt;/span&gt;為指(可能是Root &lt;span class="caps"&gt;CA&lt;/span&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;span class="caps"&gt;CA&lt;/span&gt;的運作方式為階層式的組成，基本上可以把Certificate想成憑證中心用他的公鑰簽署你的公鑰的文件(不同於&lt;span class="caps"&gt;PGP&lt;/span&gt;的信任網)，詳細規格可查看X.509文件。因此如果你不相信底層&lt;span class="caps"&gt;CA&lt;/span&gt;你可以去驗證底層&lt;span class="caps"&gt;CA&lt;/span&gt;的公鑰有沒有經過更高層&lt;span class="caps"&gt;CA&lt;/span&gt;驗證簽署，以此類推，最後回溯到你可以信任的&lt;span class="caps"&gt;CA&lt;/span&gt;為止(可能是Root &lt;span class="caps"&gt;CA&lt;/span&gt;)&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h3 id="createing-certificate"&gt;Createing&amp;nbsp;Certificate&lt;/h3&gt;
 &lt;p&gt;好的，那要準備哪些文件來取的Certificate呢?流程又是如何呢? 我們以實作&lt;span class="caps"&gt;SSL&lt;/span&gt;的函式庫OpenSSL為例，我們可簡單的分為幾個步驟:&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;OpenSSL一直有些爭議，有興趣的讀者可以搜尋參考&lt;a href="http://devco.re/blog/2014/04/11/openssl-heartbleed-how-to-hack-how-to-protect/"&gt;Heartbleed事件&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;OpenSSL一直有些爭議，不過為求教學方便我們仍使用他(記得要注意版本)，有興趣的讀者可以搜尋參考&lt;a href="http://devco.re/blog/2014/04/11/openssl-heartbleed-how-to-hack-how-to-protect/"&gt;Heartbleed事件&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h4 id="private-key-csrcertificate-singning-request"&gt;產生private key 和 &lt;span class="caps"&gt;CSR&lt;/span&gt;(Certificate Singning&amp;nbsp;Request)&lt;/h4&gt;
+&lt;h4 id="private-key-csr-certificate-singning-request"&gt;產生private key 和 &lt;span class="caps"&gt;CSR&lt;/span&gt; (Certificate Singning&amp;nbsp;Request)&lt;/h4&gt;
+&lt;p&gt;安裝好OpenSSL後輸入以下指令&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;openssl&lt;/span&gt; &lt;span class="n"&gt;req&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;nodes&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;newkey&lt;/span&gt; &lt;span class="n"&gt;rsa&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;2048&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;keyout&lt;/span&gt; &lt;span class="n"&gt;example&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;out&lt;/span&gt; &lt;span class="n"&gt;example&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;csr&lt;/span&gt;
 &lt;span class="cp"&gt;# req: openssl command to manage CSRs, -nodes: set the passphrase of the private key to blank (private keys of TLS may have passphrases)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;過程中會問一些相關資訊，其中domain name是必要的, 另外你也可以用 &lt;code&gt;subj&lt;/code&gt; 引數傳入相關資訊，2048 bit 也可根據需求再調&lt;a href="https://www.keylength.com/"&gt;參考&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;過程中會問一些相關資訊，其中Domain Name是必要的, 另外你也可以用 &lt;code&gt;-subj&lt;/code&gt; 引數傳入相關資訊，2048 bit 也可根據安全需求再調&lt;a href="https://www.keylength.com/"&gt;參考&lt;/a&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;openssl&lt;/span&gt; &lt;span class="n"&gt;req&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;nodes&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;newkey&lt;/span&gt; &lt;span class="n"&gt;rsa&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="mi"&gt;2048&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;keyout&lt;/span&gt; &lt;span class="n"&gt;example&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;out&lt;/span&gt; &lt;span class="n"&gt;example&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;csr&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;subj&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com”&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -60,14 +61,14 @@
 
 
 &lt;h4 id="cacsrca"&gt;選定&lt;span class="caps"&gt;CA&lt;/span&gt;然後將&lt;span class="caps"&gt;CSR&lt;/span&gt;給&lt;span class="caps"&gt;CA&lt;/span&gt;&lt;/h4&gt;
-&lt;p&gt;目前免費的&lt;span class="caps"&gt;CA&lt;/span&gt;最有名為&lt;a href="https://letsencrypt.org/"&gt;Let&amp;rsquo;s Encrypt&lt;/a&gt;, 他們使用 &lt;span class="caps"&gt;AMCE&lt;/span&gt; (Automated Certificate Management Environment) protocol 去驗証你是否擁有你欲簽証的 domain。簡單來說，&lt;span class="caps"&gt;LE&lt;/span&gt; 會要求你的 server 在特定的 path 加入特定的檔案，如果你做得到，就代表你擁有這個 domain。這樣的簽証第一次要在 &lt;span class="caps"&gt;LE&lt;/span&gt; server 上註冊，之後最長每 90 天認証一次。(歸於Domain&amp;nbsp;Validation類的簽證)。&lt;/p&gt;
+&lt;p&gt;目前免費的&lt;span class="caps"&gt;CA&lt;/span&gt;最有名為&lt;a href="https://letsencrypt.org/"&gt;Let&amp;rsquo;s Encrypt&lt;/a&gt;, 他們使用 &lt;span class="caps"&gt;AMCE&lt;/span&gt; (Automated Certificate Management Environment) 協定去驗証你是否擁有你欲簽証的 domain。簡單來說，&lt;span class="caps"&gt;LE&lt;/span&gt; 會要求你的 server 在特定的 path 加入特定的檔案，如果你做得到，就代表你擁有這個 domain。這樣的簽証第一次要在 &lt;span class="caps"&gt;LE&lt;/span&gt; server 上註冊，之後最長每 90 天認証一次。(歸於Domain&amp;nbsp;Validation類的簽證)。&lt;/p&gt;
 &lt;p&gt;你可以參考&lt;a href="https://blog.liang2.tw/posts/2016/02/pydoctw-https/"&gt;用script&lt;/a&gt;或用&lt;a href="https://free.com.tw/ssl-for-free/"&gt;網頁端script&lt;/a&gt;&lt;a href="https://gethttpsforfree.com/"&gt;或這個&lt;/a&gt;來拿到你的簽證。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;選用工具的時候，如果不那麼信任，請不要隨便交出private&amp;nbsp;key~&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h4 id="certificateprivate-key"&gt;將certificate和private key&amp;nbsp;放入你的網站&lt;/h4&gt;
-&lt;p&gt;以Xampp 來說基本上只要去&lt;code&gt;apache/conf/extra/httpd-ssl.conf&lt;/code&gt; 檔照此template放入你對應的certificate和private&amp;nbsp;key路徑就可以囉。&lt;/p&gt;
-&lt;p&gt;另外如果要把http 80 port的流量也導向https&amp;nbsp;443的話，apache官方目前查到的做法如下(用Redirect指令)在上述檔案再加入&lt;/p&gt;
+&lt;p&gt;以&lt;a href="https://www.apachefriends.org/zh_tw/index.html"&gt;&lt;strong&gt;Xampp&lt;/strong&gt;&lt;/a&gt; 來說基本上只要去&lt;code&gt;apache/conf/extra/httpd-ssl.conf&lt;/code&gt; 檔照在此檔案中放入你對應的certificate和private&amp;nbsp;key路徑就可以囉。&lt;/p&gt;
+&lt;p&gt;另外如果要把http 80 port的流量也導向https 443的話，Apache官方目前查到的做法如下(用&lt;code&gt;Redirect&lt;/code&gt;指令)在上述檔案再加入&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nt"&gt;&amp;lt;VirtualHost&lt;/span&gt; &lt;span class="err"&gt;*:80&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt; 
     ServerName www.example.com
     DocumentRoot &amp;quot;C:/xampp/htdocs&amp;quot; 
@@ -78,9 +79,9 @@
 
 
 &lt;h3 id="ssl"&gt;測試&lt;span class="caps"&gt;SSL&lt;/span&gt;&lt;/h3&gt;
-&lt;p&gt;用瀏覽器開啟對應的網站來測試，要注意的是有些防毒軟體或防火牆(如Avast)可能會改過你的&lt;span class="caps"&gt;CA&lt;/span&gt;&amp;nbsp;發證單位&lt;/p&gt;
+&lt;p&gt;用瀏覽器開啟對應的網站來測試，要注意的是有些防毒軟體或防火牆(如&lt;a href="https://www.sslbuyer.com/index.php?option=com_content&amp;amp;view=article&amp;amp;id=182:avast-web-mail-shield-root&amp;amp;catid=25&amp;amp;Itemid=2595"&gt;Avast&lt;/a&gt;)可能會改過你的&lt;span class="caps"&gt;CA&lt;/span&gt;&amp;nbsp;發證單位&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;遇到這種情況也可以暫時關閉網也防護，來看發證單位，不過就看個人衡量了~&lt;/p&gt;
+&lt;p&gt;遇到這種情況也可以關閉網也防護，來看發證單位，這類功能是好是壞就看個人衡量了~&lt;/p&gt;
 &lt;/blockquote&gt;</summary><category term="zh"></category><category term="SSL"></category></entry><entry><title>Setting Up Blogs With Pelican and GitHub Pages</title><link href="http://phonchi.github.io/posts/2016/05/Setup-blogs/" rel="alternate"></link><published>2016-05-02T22:00:00+08:00</published><author><name>phonchi</name></author><id>tag:phonchi.github.io,2016-05-02:posts/2016/05/Setup-blogs/</id><summary type="html">&lt;hr /&gt;
 &lt;p&gt;書寫-也是試了很多方式，國中時的日記，高中時的作文式筆記，無名小站，&lt;a href="http://phonchi.blogspot.tw/"&gt;Google Blogger&lt;/a&gt; ，&lt;span class="caps"&gt;BBS&lt;/span&gt;，facebook，漸漸習慣以鍵盤滑鼠代替紙筆&lt;/p&gt;
 &lt;blockquote&gt;
